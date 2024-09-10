@@ -1,5 +1,5 @@
 {
-  "name": "package-demo",
+  "name": "@tonyerx/package-demo",
   "version": "1.0.0",
   "description": "",
   "main": "./lib.js",
