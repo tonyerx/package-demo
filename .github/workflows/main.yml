@@ -19,7 +19,7 @@ jobs:
           run_install: false
 
       # Step3: 安装Nodejs环境并打包
-      - name: Setup Node and Build
+      - name: Setup nodejs and build package
         uses: actions/setup-node@v4
         with:
           node-version: 20
