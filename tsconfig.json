@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./lib",
+    "sourceMap": true,
+    "declaration": true,
+    "target": "ESNext",
+    "module": "ESNext",
+  },
+  "include": ["./src/**/*"]
+}
