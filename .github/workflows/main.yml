@@ -8,34 +8,48 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      # 拉源码
+      # Step1: 检出源码
       - name: Checkout
         uses: actions/checkout@v4
       
-      # 设置pnpm环境
+      # Step2: 安装pnpm环境
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
-      # 设置Nodejs环境并打包
+      # Step3: 安装Nodejs环境并打包
       - name: Setup Node and Build
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          # 设置要发布到哪个npm镜像仓库，这里指向npmjs
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
+
+      # Step4：安装依赖
       - run: pnpm install
+
+      # Step5：打包
       - run: pnpm build
-      - run: pnpm publish --access public --no-git-checks
+
+      # Step6：发布到npmjs
+      - name: Publish to npmjs
+        # 这里用了带scope的包名防止和其他公共包冲突，因此需要加上--access public
+        # 因为当前检出的是tag的代码，没有分支，因此会报错，需要加上--no-git-checks，见https://github.com/pnpm/pnpm/issues/5894
+        run: pnpm publish --access public --no-git-checks
         env:
+          # 这里环境变量写配置在仓库secret的npm access token的名字
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      # Step7：将lib目录压缩成一个文件，用于release附件
       - run: tar -zcvf release.tgz ./lib/
 
-      # 发布release
+      # Step8: 发布release
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          # 这里环境变量写配置在仓库secret的GitHub Personal access token的名字
           token: ${{ secrets.GHP_TOKEN }}
           name: ${{ github.ref }}
           files: ./release.tgz
